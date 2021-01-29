@@ -2,8 +2,8 @@ require 'json'
 require 'date'
 require 'net/http'
 
-require_relative './keys.rb'
-require_relative './new_relic.rb'
+require_relative '../keys'
+require_relative './new_relic'
 require_relative './deployments'
 
 deployments = NewRelic::load_deployments(application_id: APP_ID, api_key: NEW_RELIC_API_KEY)
