@@ -1,7 +1,7 @@
 require_relative './deployments.rb'
 
 module NewRelic
-  def self.load_deployments(application_id: , api_key:)
+  def self.load_deployments(application_id: , api_key:, commit_collector:)
     app_id = application_id
     uri = URI("https://api.newrelic.com/v2/applications/#{app_id}/deployments.json")
     req = Net::HTTP::Get.new(uri)
@@ -18,7 +18,7 @@ module NewRelic
       deployments = out['deployments']
         .filter { |deployment| deployment["links"]["application"] == app_id.to_i  }
         .map { |d| Deployments::Deployment.from_json(d) }
-      Deployments::Deployments.new(deployments)
+      Deployments::Deployments.new(deployments, commit_collector: commit_collector)
     else
       raise Exception.new("Unsuccessful Request: \n#{res.body}")
     end

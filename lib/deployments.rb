@@ -1,5 +1,5 @@
 module Deployments
-  class Deployment < Struct.new(:id, :revision, :user, :time, :previous_deployment)
+  class Deployment < Struct.new(:id, :sha, :user, :time, :previous_deployment)
     def self.from_json(json_deployment)
       time = DateTime.parse(json_deployment["timestamp"])
       Deployment.new(json_deployment["id"], json_deployment["revision"], json_deployment["user"], time, nil)
@@ -11,8 +11,9 @@ module Deployments
   end
 
   class Deployments
-    def initialize(deployments)
+    def initialize(deployments, commit_collector:)
       @deployments = deployments.sort_by(&:time)
+      @commit_collector = commit_collector
     end
 
     def [](deployment_id)
@@ -30,6 +31,17 @@ module Deployments
       end
     end
 
+    def raw
+      setup_data
+      @deployments.reverse
+    end
+
+    def get_commits(deployment_id)
+      deployment = deployments_by_id[deployment_id]
+      return if deployment.previous_deployment.nil?
+      return @commit_collector.gather_commits(deployment)
+    end
+
     private
 
     def setup_data
@@ -44,7 +56,7 @@ module Deployments
       @deployments.each_with_index do |deployment, index|
         next unless index > 0
         previous_deployment            = @deployments[index - 1]
-        deployment.previous_deployment = previous_deployment.id
+        deployment.previous_deployment = previous_deployment.sha
       end
     end
   end
