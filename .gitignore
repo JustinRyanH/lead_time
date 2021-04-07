@@ -1,3 +1,4 @@
 .env
 keys.rb
 /.idea/
+deployments.csv
