@@ -20,6 +20,6 @@ From ROOT directory Run
 ruby ./lib/run.rb
 ```
 
-You will receive a `deployments.csv` in your root directory
+Application will create a `deployments.csv` in repository root directory
 
 Use CSV as needed
