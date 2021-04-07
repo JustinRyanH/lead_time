@@ -6,7 +6,9 @@ module Deployments
     end
 
     def date
-      time.to_date
+      cloned_time = time.clone
+      cloned_time.new_offset("+0000")
+      cloned_time.to_date
     end
   end
 

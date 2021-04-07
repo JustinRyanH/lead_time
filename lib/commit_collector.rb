@@ -21,7 +21,10 @@ class CommitCollector
       if cm.commit.message.include?("Merge pull request ")
         sha = cm.sha
         author = cm.commit.author
-        Commit.new(sha: sha, time: author.date.to_datetime, name: author.name, email: author.email)
+        date = author.date.to_datetime
+        date.new_offset("+0000")
+
+        Commit.new(sha: sha, time: date, name: author.name, email: author.email)
       end
     end.compact
   end
